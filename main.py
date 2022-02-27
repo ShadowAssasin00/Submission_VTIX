@@ -12,10 +12,12 @@ import datetime
 from datetime import date
 from datetime import datetime
 import time
+from time import sleep
 import sys
 import threading 
 import ctypes
 from turtle import right
+from unittest import skip
 
 
 
@@ -26,7 +28,7 @@ win.title("Reminder and To-Do List")
 
 #TIME AND DATE IS HANDLED
 today = date.today()
-today_date = tkinter.Label(text=today.strftime("%B %d, %Y"), font= ('Arial 25 bold'))
+today_date = tkinter.Label(win, text=today.strftime("%B %d, %Y"), font= ('Arial 25 bold'))
 
 #ADD ITEM WIDGETS ARE CREATED 
 event = tkinter.StringVar()
@@ -73,9 +75,15 @@ def entry():
         if len(curr) == 1:
             tkinter.Label(win, text = "- " + str(curr[0]) + "\n", font = ('arial 15'), wraplength=300).place(relx = 0.2, rely = counter, anchor= CENTER)
         if len(curr) == 2:
-            tkinter.Label(win, text = "- " + str(curr[0]) + " at " + str(curr[1]) + "\n", font = ('arial 15'), wraplength=300).place(relx = 0.2, rely = counter, anchor= CENTER)
+            if curr[1] == None:
+                skip
+            else:
+                tkinter.Label(win, text = "- " + str(curr[0]) + " at " + str(curr[1]) + "\n", font = ('arial 15'), wraplength=300).place(relx = 0.2, rely = counter, anchor= CENTER)
         if len(curr) == 3:
-            tkinter.Label(win, text = "- " + str(curr[0]) + " at " + str(curr[1]) + " on " + str(curr[2]) + "\n", font = ('arial 15'), wraplength=300).place(relx = 0.2, rely = counter, anchor= CENTER)
+            if curr[1] == None:
+                skip
+            else:
+                tkinter.Label(win, text = "- " + str(curr[0]) + " at " + str(curr[1]) + " on " + str(curr[2]) + "\n", font = ('arial 15'), wraplength=300).place(relx = 0.2, rely = counter, anchor= CENTER)
 
 
 def updatingTime():
@@ -83,7 +91,7 @@ def updatingTime():
         global currentTime
         currentTime = datetime.now().time()
         currentTime = strftime("%H:%M")
-        today_time = tkinter.Label(text = currentTime, font = ('Arial 20'))
+        today_time = tkinter.Label(win, text = currentTime, font = ('Arial 20'))
         today_time.place(relx = 0.5, rely=0.1, anchor=CENTER)
 
         values = list(to_do.values())
@@ -91,10 +99,14 @@ def updatingTime():
             if len(i) == 2:
                 if i[1] == currentTime:
                     ctypes.windll.user32.MessageBoxW(0, str(i[0]) , "Reminder", 1)
+                    i[1] = None
+                    break
             if len(i) == 3:
                 if i[1] == currentTime:
                     if i[2] == today.strftime("%B %d, %Y"):
                         ctypes.windll.user32.MessageBoxW(0, str(i[0]) , "Reminder", 1)
+                        i[1] = None
+                        break
                 
                     
 #use threading to run the clock in the background and check if the time has been reached for any events 
